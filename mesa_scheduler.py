@@ -78,3 +78,25 @@ class BaseScheduler:
         for key in agent_keys:
             if key in self._agents:
                 yield self._agents[key]
+
+
+class RandomActivation(BaseScheduler):
+    """A scheduler which activates each agent once per step, in random order,
+    with the order reshuffled every step.
+
+    This is equivalent to the NetLogo 'ask agents...' and is generally the
+    default behavior for an ABM.
+
+    Assumes that all agents have a step(model) method.
+
+    """
+
+    def step(self) -> None:
+        """Executes the step of all agents, one at a time, in
+        random order.
+
+        """
+        for agent in self.agent_buffer(shuffled=True):
+            agent.step()
+        self.steps += 1
+        self.time += 1
